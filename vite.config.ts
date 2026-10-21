@@ -8,10 +8,45 @@ import { defineConfig } from 'vite';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+function productionRootSync() {
+  return {
+    name: 'production-root-sync',
+    transformIndexHtml: {
+      order: 'pre' as const,
+      handler(html: string) {
+        // In dev or when building, ensure Vite compiles from /src/main.tsx even if index.html references built assets
+        let transformed = html;
+        if (transformed.includes('assets/index-')) {
+          transformed = transformed
+            .replace(/<script type="module" crossorigin src=".*?assets\/index-.*?\.js"><\/script>/g, '<script type="module" src="/src/main.tsx"></script>')
+            .replace(/<link rel="stylesheet" crossorigin href=".*?assets\/index-.*?\.css">/g, '');
+        }
+        return transformed;
+      },
+    },
+    closeBundle() {
+      // After production build completes, copy dist/index.html and dist/assets to the repository root
+      // This guarantees that GitHub Pages serves the production bundle when deploying from master root
+      const distHtml = path.join(__dirname, 'dist', 'index.html');
+      const rootHtml = path.join(__dirname, 'index.html');
+      const distAssets = path.join(__dirname, 'dist', 'assets');
+      const rootAssets = path.join(__dirname, 'assets');
+
+      if (fs.existsSync(distHtml)) {
+        fs.copyFileSync(distHtml, rootHtml);
+      }
+      if (fs.existsSync(distAssets)) {
+        fs.cpSync(distAssets, rootAssets, { recursive: true, force: true });
+      }
+    },
+  };
+}
+
 export default defineConfig(() => {
   return {
     base: process.env.BASE_PATH || './',
     plugins: [
+      productionRootSync(),
       react(),
       tailwindcss(),
       {

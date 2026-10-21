@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ArrowDown, Menu, X } from "lucide-react";
-import { SectionId } from "../config";
+import { DOWNLOAD_URL, SectionId } from "../config";
 
 interface NavigationProps {
   activeSection: SectionId;
@@ -120,16 +120,14 @@ export const Navigation: React.FC<NavigationProps> = ({
             );
           })}
           <div className="pt-2 border-t border-neutral-100 mt-1">
-            <button
-              type="button"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onGetLightClick();
-              }}
-              className="w-full py-2.5 text-xs font-medium text-white bg-[#1A1A1A] hover:bg-[#2A2A2A] rounded-xl text-center cursor-pointer"
+            <a
+              href={DOWNLOAD_URL}
+              download="LIGHT_0.1.3_x64-setup.exe"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block w-full py-2.5 text-xs font-medium text-white bg-[#1A1A1A] hover:bg-[#2A2A2A] rounded-xl text-center cursor-pointer no-underline"
             >
               Get LIGHT for Windows (v0.1.3 · 5.1 MB)
-            </button>
+            </a>
           </div>
         </div>
       )}

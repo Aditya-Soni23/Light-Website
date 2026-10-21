@@ -12,20 +12,6 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ onFeaturesClic
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const currentYear = new Date().getFullYear();
 
-  const handleDownloadClick = () => {
-    if (DOWNLOAD_URL && DOWNLOAD_URL.trim() !== "") {
-      const a = document.createElement("a");
-      a.href = DOWNLOAD_URL;
-      a.download = "LIGHT_0.1.3_x64-setup.exe";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } else {
-      // Friendly temporary state for unconfigured installer URL
-      setShowStatusModal(true);
-    }
-  };
-
   return (
     <section
       id="download"
@@ -107,11 +93,17 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ onFeaturesClic
 
         {/* The Giant Download CTA */}
         <div className="w-full max-w-md flex flex-col items-center">
-          <button
-            type="button"
-            onClick={handleDownloadClick}
+          <a
+            href={DOWNLOAD_URL}
+            download="LIGHT_0.1.3_x64-setup.exe"
+            onClick={(e) => {
+              if (!DOWNLOAD_URL || DOWNLOAD_URL.trim() === "") {
+                e.preventDefault();
+                setShowStatusModal(true);
+              }
+            }}
             aria-describedby="download-subtext"
-            className="group w-full py-4 sm:py-5 px-8 rounded-2xl bg-[#1A1A1A] hover:bg-[#282828] active:scale-[0.99] text-white transition-all duration-200 shadow-[0_10px_35px_-5px_rgba(0,0,0,0.2)] hover:shadow-[0_16px_45px_-8px_rgba(0,0,0,0.3)] flex flex-col items-center justify-center gap-1 cursor-pointer"
+            className="group w-full py-4 sm:py-5 px-8 rounded-2xl bg-[#1A1A1A] hover:bg-[#282828] active:scale-[0.99] text-white transition-all duration-200 shadow-[0_10px_35px_-5px_rgba(0,0,0,0.2)] hover:shadow-[0_16px_45px_-8px_rgba(0,0,0,0.3)] flex flex-col items-center justify-center gap-1 cursor-pointer no-underline"
           >
             <div className="flex items-center gap-3">
               <Download className="w-5 h-5 text-neutral-300 group-hover:translate-y-0.5 transition-transform duration-200" />
@@ -125,7 +117,7 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ onFeaturesClic
             >
               Lightweight download · v{PRODUCT_CONFIG.version} (5.1 MB)
             </span>
-          </button>
+          </a>
         </div>
       </div>
 

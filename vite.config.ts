@@ -10,6 +10,7 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig(() => {
   return {
+    base: process.env.BASE_PATH || './',
     plugins: [
       react(),
       tailwindcss(),
@@ -18,11 +19,14 @@ export default defineConfig(() => {
         configureServer(server) {
           server.middlewares.use('/frames', (req, res, next) => {
             const cleanUrl = req.url ? req.url.split('?')[0].replace(/^\//, '') : '';
-            const filePath = path.join(__dirname, '../frames', cleanUrl);
-            if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+            const publicPath = path.join(__dirname, 'public/frames', cleanUrl);
+            const rootPath = path.join(__dirname, 'frames', cleanUrl);
+            const targetPath = fs.existsSync(publicPath) ? publicPath : rootPath;
+
+            if (fs.existsSync(targetPath) && fs.statSync(targetPath).isFile()) {
               res.setHeader('Content-Type', 'image/jpeg');
               res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-              fs.createReadStream(filePath).pipe(res);
+              fs.createReadStream(targetPath).pipe(res);
             } else {
               next();
             }
@@ -40,9 +44,6 @@ export default defineConfig(() => {
       host: '0.0.0.0',
       hmr: process.env.DISABLE_HMR !== 'true',
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
-      fs: {
-        allow: ['..'],
-      },
     },
   };
 });

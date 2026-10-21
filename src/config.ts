@@ -5,10 +5,12 @@
 
 /**
  * DOWNLOAD_URL
- * Leave empty or set to the official installer URL when ready.
- * If empty, the download button provides a friendly notification that the release candidate is preparing.
+ * Points to the verified LIGHT Windows installer binary.
+ * Automatically resolves relative to the current site base URL.
  */
-export const DOWNLOAD_URL: string = "/LIGHT_0.1.3_x64-setup.exe";
+const rawBase = import.meta.env.BASE_URL || "./";
+const base = rawBase.endsWith("/") ? rawBase : `${rawBase}/`;
+export const DOWNLOAD_URL: string = `${base}LIGHT_0.1.3_x64-setup.exe`;
 
 /**
  * Product metadata and confirmed specifications

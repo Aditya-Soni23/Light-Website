@@ -19,7 +19,9 @@ export const CinematicBackground: React.FC<CinematicBackgroundProps> = ({ active
 
   function getFrameSrc(index: number): string {
     const pad = String(index + 1).padStart(3, "0");
-    return `/frames/ezgif-frame-${pad}.jpg`;
+    const rawBase = import.meta.env.BASE_URL || "./";
+    const base = rawBase.endsWith("/") ? rawBase : `${rawBase}/`;
+    return `${base}frames/ezgif-frame-${pad}.jpg`;
   }
 
   useEffect(() => {
